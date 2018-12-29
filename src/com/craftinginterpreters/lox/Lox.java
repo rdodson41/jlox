@@ -1,4 +1,4 @@
-package com.rdodson41.lox;
+package com.craftinginterpreters.lox;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,13 +10,13 @@ import java.util.List;
 
 public class Lox {
   private static final Interpreter interpreter = new Interpreter();
-
   static boolean hadError = false;
   static boolean hadRuntimeError = false;
 
   public static void main(String[] args) throws IOException {
     if (args.length > 1) {
       System.out.println("Usage: jlox [script]");
+      System.exit(64);
     } else if (args.length == 1) {
       runFile(args[0]);
     } else {
@@ -28,11 +28,9 @@ public class Lox {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     run(new String(bytes, Charset.defaultCharset()));
 
-    if (hadError)
-      System.exit(65);
-
-    if (hadRuntimeError)
-      System.exit(70);
+    // Indicate an error in the exit code.
+    if (hadError) System.exit(65);
+    if (hadRuntimeError) System.exit(70);
   }
 
   private static void runPrompt() throws IOException {
@@ -52,8 +50,8 @@ public class Lox {
     Parser parser = new Parser(tokens);
     List<Stmt> statements = parser.parse();
 
-    if (hadError)
-      return;
+    // Stop if there was a syntax error.
+    if (hadError) return;
 
     interpreter.interpret(statements);
   }
@@ -62,13 +60,9 @@ public class Lox {
     report(line, "", message);
   }
 
-  static void runtimeError(RuntimeError error) {
-    System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
-    hadRuntimeError = true;
-  }
-
-  static private void report(int line, String where, String message) {
-    System.err.println("[line " + line + "] Error" + where + ": " + message);
+  private static void report(int line, String where, String message) {
+    System.err.println(
+        "[line " + line + "] Error" + where + ": " + message);
     hadError = true;
   }
 
@@ -78,5 +72,11 @@ public class Lox {
     } else {
       report(token.line, " at '" + token.lexeme + "'", message);
     }
+  }
+
+  static void runtimeError(RuntimeError error) {
+    System.err.println(error.getMessage() +
+        "\n[line " + error.token.line + "]");
+    hadRuntimeError = true;
   }
 }

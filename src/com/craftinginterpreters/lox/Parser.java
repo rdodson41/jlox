@@ -1,9 +1,9 @@
-package com.rdodson41.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rdodson41.lox.TokenType.*;
+import static com.craftinginterpreters.lox.TokenType.*;
 
 class Parser {
   private static class ParseError extends RuntimeException {}
@@ -30,8 +30,7 @@ class Parser {
 
   private Stmt declaration() {
     try {
-      if (match(VAR))
-        return varDeclaration();
+      if (match(VAR)) return varDeclaration();
 
       return statement();
     } catch (ParseError error) {
@@ -41,8 +40,7 @@ class Parser {
   }
 
   private Stmt statement() {
-    if (match(PRINT))
-      return printStatement();
+    if (match(PRINT)) return printStatement();
 
     return expressionStatement();
   }
@@ -130,12 +128,9 @@ class Parser {
   }
 
   private Expr primary() {
-    if (match(NIL))
-      return new Expr.Literal(null);
-    if (match(FALSE))
-      return new Expr.Literal(false);
-    if (match(TRUE))
-      return new Expr.Literal(true);
+    if (match(FALSE)) return new Expr.Literal(false);
+    if (match(TRUE)) return new Expr.Literal(true);
+    if (match(NIL)) return new Expr.Literal(null);
 
     if (match(NUMBER, STRING)) {
       return new Expr.Literal(previous().literal);
@@ -155,7 +150,7 @@ class Parser {
   }
 
   private boolean match(TokenType... types) {
-    for (TokenType type: types) {
+    for (TokenType type : types) {
       if (check(type)) {
         advance();
         return true;
@@ -166,21 +161,18 @@ class Parser {
   }
 
   private Token consume(TokenType type, String message) {
-    if (check(type))
-      return advance();
+    if (check(type)) return advance();
 
     throw error(peek(), message);
   }
 
   private boolean check(TokenType tokenType) {
-    if (isAtEnd())
-      return false;
+    if (isAtEnd()) return false;
     return peek().type == tokenType;
   }
 
   private Token advance() {
-    if (!isAtEnd())
-      current++;
+    if (!isAtEnd()) current++;
     return previous();
   }
 
@@ -205,8 +197,7 @@ class Parser {
     advance();
 
     while (!isAtEnd()) {
-      if (previous().type == SEMICOLON)
-        return;
+      if (previous().type == SEMICOLON) return;
 
       switch (peek().type) {
         case CLASS:

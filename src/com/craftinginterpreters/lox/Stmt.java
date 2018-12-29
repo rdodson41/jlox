@@ -1,4 +1,4 @@
-package com.rdodson41.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.List;
 
@@ -8,7 +8,6 @@ abstract class Stmt {
     R visitPrintStmt(Print stmt);
     R visitVarStmt(Var stmt);
   }
-
   static class Expression extends Stmt {
     Expression(Expr expression) {
       this.expression = expression;
@@ -20,7 +19,6 @@ abstract class Stmt {
 
     final Expr expression;
   }
-
   static class Print extends Stmt {
     Print(Expr expression) {
       this.expression = expression;
@@ -32,7 +30,6 @@ abstract class Stmt {
 
     final Expr expression;
   }
-
   static class Var extends Stmt {
     Var(Token name, Expr initializer) {
       this.name = name;
